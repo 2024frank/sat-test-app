@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKODON SAT Practice Test Center</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('hmm.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .welcome-message {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            box-sizing: border-box;
+        }
+        .start-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .start-button:hover {
+            background-color: #0056b3;
+        }
+        @media (min-width: 768px) {
+            .welcome-message {
+                max-width: 60%;
+            }
+        }
+        @media (min-width: 1024px) {
+            .welcome-message {
+                max-width: 40%;
+            }
+        }
+        @media (max-width: 767px) {
+            body {
+                background-size: contain;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-message">
+        <h1>WELCOME TO CKODON SAT PRACTICE TEST CENTER</h1>
+        <p>All tests are from the CollegeBoard</p>
+        <a href="Testtaker.html" class="start-button">Start Practice Test</a>
+    </div>
+</body>
+</html>

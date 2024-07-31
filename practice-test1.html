@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practice Test 1</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background: url('SAT.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        #pdf-container {
+            width: 66%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+        }
+        #answer-sheet {
+            width: 34%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .module {
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .module h2 {
+            margin-top: 0;
+        }
+        .module-content {
+            display: none;
+            margin-top: 10px;
+        }
+        .question {
+            margin-bottom: 10px;
+        }
+        .question label {
+            margin-right: 10px;
+        }
+        .submit-button {
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            background: white;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="pdf-container">
+        <embed src="pdf\sat-practice-test-1-digital.pdf" type="application/pdf" width="100%" height="100%">
+    </div>
+    <div id="answer-sheet">
+        <div class="module" onclick="toggleModule('module1')">
+            <h2>Reading and Writing Module 1</h2>
+            <div id="module1" class="module-content"></div>
+        </div>
+        <div class="module" onclick="toggleModule('module2')">
+            <h2>Reading and Writing Module 2</h2>
+            <div id="module2" class="module-content"></div>
+        </div>
+        <div class="module" onclick="toggleModule('module3')">
+            <h2>Math Module 1</h2>
+            <div id="module3" class="module-content"></div>
+        </div>
+        <div class="module" onclick="toggleModule('module4')">
+            <h2>Math Module 2</h2>
+            <div id="module4" class="module-content"></div>
+        </div>
+        <button class="submit-button" onclick="submitAnswers()">Submit</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Correct answers for each module
+        const correctAnswers = {
+            module1: ["B", "C", "D", "A", "B", "A", "A", "D", "C", "C", "A", "A", "A", "C", "D", "C", "B", "B", "A", "A", "C", "C", "B", "A", "B", "A", "A", "A", "D", "C", "D", "D", "C"],
+            module2: ["B", "D", "A", "D", "D", "B", "D", "A", "B", "D", "D", "A", "B", "A", "A", "C", "A", "D", "C", "B", "C", "D", "D", "C", "B", "D", "C", "D", "A", "C", "B", "B", "D"],
+            module3: ["B", "C", "D", "A", "A", "2520", "30", "D", "B", "C", "B", "C", "41", "2;-12", "D", "C", "A", "B", "D", "14", "5", "C", "D", "D", "C", "B", "104"],
+            module4: ["A", "D", "B", "D", "D", "40", "7", "B", "D", "A", "A", "A", "70", "10", "A", "B", "C", "C", "B", "16", "28", "A", "B", "C", "B", "B", "289"]
+        };
+
+        // Conversion table from raw score to scaled score
+        const rawToScaled = [
+            [0, 200, 200], [1, 200, 200], [2, 200, 200], [3, 200, 200], [4, 200, 200], [5, 200, 200], [6, 200, 200], 
+            [7, 200, 210], [8, 200, 220], [9, 210, 230], [10, 230, 250], [11, 240, 260], [12, 250, 270], [13, 260, 280], 
+            [14, 280, 300], [15, 290, 310], [16, 320, 340], [17, 340, 360], [18, 350, 370], [19, 360, 380], [20, 370, 390], 
+            [21, 370, 390], [22, 380, 400], [23, 390, 410], [24, 400, 420], [25, 410, 430], [26, 420, 440], [27, 420, 440], 
+            [28, 430, 450], [29, 440, 460], [30, 450, 470], [31, 460, 480], [32, 460, 480], [33, 470, 490], [34, 480, 500], 
+            [35, 490, 510], [36, 490, 510], [37, 500, 520], [38, 510, 530], [39, 520, 540], [40, 530, 550], [41, 540, 560], 
+            [42, 540, 560], [43, 550, 570], [44, 560, 580], [45, 570, 590], [46, 580, 600], [47, 590, 610], [48, 590, 610], 
+            [49, 600, 620], [50, 610, 630], [51, 620, 640], [52, 630, 650], [53, 630, 650], [54, 640, 660]
+        ];
+
+        // Toggle module visibility
+        function toggleModule(moduleId) {
+            const module = document.getElementById(moduleId);
+            if (module.style.display === 'none' || module.style.display === '') {
+                module.style.display = 'block';
+            } else {
+                module.style.display = 'none';
+            }
+        }
+
+        // Answer sheet generation
+        const createAnswerSheet = (module, moduleId, numQuestions, isMath = false) => {
+            for (let i = 1; i <= numQuestions; i++) {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                if (isMath) {
+                    questionDiv.innerHTML = `
+                        <label>Q${i}</label>
+                        <input type="text" name="q${moduleId}_${i}" onclick="stopPropagation(event)">
+                    `;
+                } else {
+                    questionDiv.innerHTML = `
+                        <label>Q${i}</label>
+                        <label>A <input type="radio" name="q${moduleId}_${i}" value="A" onclick="stopPropagation(event)"></label>
+                        <label>B <input type="radio" name="q${moduleId}_${i}" value="B" onclick="stopPropagation(event)"></label>
+                        <label>C <input type="radio" name="q${moduleId}_${i}" value="C" onclick="stopPropagation(event)"></label>
+                        <label>D <input type="radio" name="q${moduleId}_${i}" value="D" onclick="stopPropagation(event)"></label>
+                    `;
+                }
+                module.appendChild(questionDiv);
+            }
+        };
+
+        // Stop event propagation
+        function stopPropagation(event) {
+            event.stopPropagation();
+        }
+
+        // Create answer sheets for modules
+        document.addEventListener("DOMContentLoaded", function() {
+            createAnswerSheet(document.getElementById('module1'), 1, 33);
+            createAnswerSheet(document.getElementById('module2'), 2, 33);
+            createAnswerSheet(document.getElementById('module3'), 3, 27, true);
+            createAnswerSheet(document.getElementById('module4'), 4, 27, true);
+        });
+
+        // Convert raw score to scaled score
+        function convertRawToScaled(rawScore) {
+            for (let i = 0; i < rawToScaled.length; i++) {
+                if (rawToScaled[i][0] === rawScore) {
+                    return rawToScaled[i];
+                }
+            }
+            return [200, 200]; // Default value if not found
+        }
+
+        // Answer submission
+        function submitAnswers() {
+            const answers = {};
+            let totalCorrect = 0;
+            let totalQuestions = 0;
+            let sectionScores = {readingWriting: 0, math: 0};
+            let sectionRawScores = {readingWriting: 0, math: 0};
+
+            for (let moduleId of [1, 2, 3, 4]) {
+                answers[`module${moduleId}`] = [];
+                const numQuestions = moduleId <= 2 ? 33 : 27;
+                for (let i = 1; i <= numQuestions; i++) {
+                    let answer;
+                    if (moduleId <= 2) {
+                        answer = document.querySelector(`input[name="q${moduleId}_${i}"]:checked`);
+                        answers[`module${moduleId}`].push(answer ? answer.value : null);
+                    } else {
+                        answer = document.querySelector(`input[name="q${moduleId}_${i}"]`).value.toUpperCase();
+                        answers[`module${moduleId}`].push(answer ? answer : null);
+                    }
+
+                    if (answers[`module${moduleId}`][i-1] === correctAnswers[`module${moduleId}`][i-1]) {
+                        totalCorrect++;
+                        if (moduleId <= 2) {
+                            sectionRawScores.readingWriting++;
+                        } else {
+                            sectionRawScores.math++;
+                        }
+                    }
+                    totalQuestions++;
+                }
+            }
+
+            // Convert raw scores to scaled scores
+            const readingWritingScore = convertRawToScaled(sectionRawScores.readingWriting);
+            const mathScore = convertRawToScaled(sectionRawScores.math);
+
+            sectionScores.readingWriting = (readingWritingScore[1] + readingWritingScore[2]) / 2;
+            sectionScores.math = (mathScore[1] + mathScore[2]) / 2;
+
+            // Calculate total score
+            const totalScore = sectionScores.readingWriting + sectionScores.math;
+
+            // Display results
+            let resultHtml = `<h3>Results</h3>
+                              <p><strong>Reading and Writing:</strong> ${sectionScores.readingWriting} / 800</p>
+                              <p><strong>Math:</strong> ${sectionScores.math} / 800</p>
+                              <p><strong>Total Score:</strong> ${totalScore} / 1600</p>`;
+
+            // Detailed analysis
+            resultHtml += `<h4>Detailed Analysis</h4>`;
+            for (let moduleId of [1, 2, 3, 4]) {
+                resultHtml += `<h5>Module ${moduleId}</h5><ul>`;
+                for (let i = 1; i <= (moduleId <= 2 ? 33 : 27); i++) {
+                    const userAnswer = answers[`module${moduleId}`][i-1];
+                    const correctAnswer = correctAnswers[`module${moduleId}`][i-1];
+                    const isCorrect = userAnswer === correctAnswer;
+                    resultHtml += `<li>Q${i}: ${isCorrect ? 'Correct' : `Incorrect (Your answer: ${userAnswer}, Correct answer: ${correctAnswer})`}</li>`;
+                }
+                resultHtml += `</ul>`;
+            }
+
+            document.getElementById("result").innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>

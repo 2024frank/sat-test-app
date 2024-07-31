@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Practice Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: url('SAT.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: white;
+            width: 300px;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        select {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Full Practice Test</h1>
+        <p>Select a practice test:</p>
+        <select id="practice-test-select">
+            <option value="1">Practice Test 1</option>
+            <option value="2">Practice Test 2</option>
+            <option value="3">Practice Test 3</option>
+            <option value="4">Practice Test 4</option>
+            <option value="5">Practice Test 5</option>
+            <option value="6">Practice Test 6</option>
+        </select>
+        <button class="button" onclick="loadTest()">Next</button>
+    </div>
+
+    <script>
+        function loadTest() {
+            const selectedTest = document.getElementById('practice-test-select').value;
+            window.location.href = `practice-test${selectedTest}.html`;
+        }
+    </script>
+</body>
+</html>

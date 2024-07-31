@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Information</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            height: 100vh;
+            background: url('Bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            justify-content: center;
+            align-items: center;
+        }
+        #info-form {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        #info-form input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        #info-form button {
+            width: 90%;
+            padding: 10px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #info-form button:hover {
+            background-color: #0056b3;
+        }
+        @media (max-width: 767px) {
+            body {
+                background-size: contain;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="info-form">
+        <h2>Please enter your details to start the test</h2>
+        <input type="text" id="full-name" placeholder="Full Name" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <button onclick="storeUserInfo()">Start Test</button>
+    </div>
+
+    <script>
+        function storeUserInfo() {
+            const fullName = document.getElementById('full-name').value;
+            const email = document.getElementById('email').value;
+            if (fullName && email) {
+                localStorage.setItem('fullName', fullName);
+                localStorage.setItem('email', email);
+                window.location.href = 'starttest.html';
+            } else {
+                alert('Please enter both your name and email.');
+            }
+        }
+    </script>
+</body>
+</html>
